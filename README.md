@@ -1,45 +1,47 @@
-# groundpulse-types
+GroundPulse Shared Types & Contracts (`groundpulse-types`)
 
-Shared type definitions, Zod validation schemas, and domain interfaces for the GroundPulse platform[cite: 1].
+Shared TypeScript interfaces, Zod validation schemas, API contracts, and error definitions for the GroundPulse remote property monitoring platform.
 
 ---
 
-## 🎯 Purpose of This Repo
-This package serves as the single source of truth for all data contracts across the GroundPulse ecosystem[cite: 1]. It enables end-to-end type safety between the backend API and frontend client applications without code duplication[cite: 1].
+## 📌 Work of This Repo
+This package serves as the **single source of truth** for data contracts across the entire GroundPulse ecosystem. It defines:
+- Common domain interfaces (`User`, `Property`, `Inspection`, `ChecklistItem`, `Issue`, `Repair`).
+- Shared Zod validation schemas used identically on frontend forms and NestJS backend validation pipes.
+- Standard API response envelopes and enum definitions (`GroundPulseErrorCode`, `InspectionStatus`, `RepairStatus`).
 
 ## ❓ Why We Created This Repo
-In a polyrepo setup, having independent frontend and backend repositories introduces the risk of schema drift. If an API request payload or database enum changes, client applications will fail at runtime unless they share the same contract. This repository eliminates drift by centralizing:
-- Shared TypeScript interfaces and DTOs[cite: 1]
-- Zod validation schemas reused across client forms and API validation pipes[cite: 1]
-- Canonical enum definitions (Roles, Inspection Statuses, Repair Lifecycles)[cite: 1]
-- Standard error codes (`GroundPulseErrorCode`)[cite: 1]
+In a microrepo architecture, keeping backend and frontend repositories synchronized is the primary challenge. Without this repository, updating a property field or changing a validation rule requires manual copy-pasting across multiple projects, leading to type drift and runtime production crashes. Importing this shared package guarantees strict end-to-end type safety between the API and all web dashboards.
 
-## 📂 File Structure
+## 🛠 Tech Stack
+- **Language:** TypeScript 5.4+ (Strict Mode)
+- **Validation:** Zod
+- **Build Tooling:** `tsc` (TypeScript Compiler)
+
+## 📁 File Structure
 ```text
 groundpulse-types/
 ├── src/
-│   ├── enums/
-│   │   ├── roles.enum.ts              # OWNER, INSPECTOR, ADMIN, PROVIDER
-│   │   ├── inspection-status.enum.ts  # SCHEDULED, IN_PROGRESS, SUBMITTED
-│   │   ├── repair-status.enum.ts      # REQUESTED, ASSIGNED, IN_PROGRESS, COMPLETED
-│   │   └── issue-category.enum.ts     # LEAK, ELECTRICAL, SECURITY, CLEANLINESS, OTHER
-│   ├── interfaces/
-│   │   ├── user.interface.ts
-│   │   ├── property.interface.ts
-│   │   ├── inspection.interface.ts
-│   │   ├── checklist-item.interface.ts
-│   │   ├── issue.interface.ts
-│   │   └── repair.interface.ts
-│   ├── schemas/                       # Shared Zod validation schemas
-│   │   ├── issue.schema.ts            # flagIssueSchema
-│   │   ├── inspection.schema.ts       # scheduleInspectionSchema
-│   │   └── repair.schema.ts           # completeRepairSchema
-│   ├── errors/
-│   │   └── error-codes.ts             # Standard GroundPulse error codes
-│   └── index.ts                       # Public API barrel export
+│   ├── contracts/
+│   │   ├── api-responses.ts
+│   │   ├── error-codes.ts
+│   │   └── events.ts
+│   ├── models/
+│   │   ├── audit.ts
+│   │   ├── inspection.ts
+│   │   ├── issue.ts
+│   │   ├── property.ts
+│   │   ├── repair.ts
+│   │   └── user.ts
+│   ├── schemas/
+│   │   ├── inspection.schema.ts
+│   │   ├── issue.schema.ts
+│   │   └── property.schema.ts
+│   └── index.ts
 ├── package.json
 ├── tsconfig.json
 └── README.md
+
 
 
 
@@ -48,17 +50,20 @@ Bash
 # Install dependencies
 npm install
 
-# Build the TypeScript types into dist/
+# Build the TypeScript definitions
 npm run build
 
-# Run type check
+# Type check
 npm run type-check
-📦 How to Consume in Other Repos
-Add this dependency directly to package.json in your API and Web repositories:
+
+
+
+📦 How to Consume in Other Repositories
+Add to your package.json in groundpulse-api, groundpulse-web-owner, or groundpulse-web-ops:
 
 JSON
 {
   "dependencies": {
-    "groundpulse-types": "github:Ground-Pulse/groundpulse-types#main"
+    "groundpulse-types": "github:Ground-Pulse/groundpulse-types#v1.0.0"
   }
 }
